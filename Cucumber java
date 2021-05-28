@@ -1,0 +1,103 @@
+Getting set up with Cucumber-JVM for the first time with an IDE can be a tricky thing to get right. There are a number of dependencies and plugins to install and configure which might require a fair amount of searching StackOverflow and Cucumber repositories. All of this can be time-consuming and frustrating. In this post, we are going to go through step-by-step what it is required to get a Cucumber-JVM project set up to the point where you can run it inside your Eclipse IDE, as well as run via Maven.
+
+You can either follow this post as you set up your project, or if you are looking to get started straight away, you can download a project template from our repository. At the time of writing, we will be using Java 1.8, Eclipse Oxygen.2 (4.7.2) and Cucumber-JVM 2.3.1. So let’s get started!
+
+Set up your Maven project
+Our project will be managed via Maven, so our first port of call is to create a new Maven project in Eclipse. Simply create a new project and choose the Maven Project wizard:
+
+Select a wizard screenshot - cucumber jvm tutorial
+Click on ‘Next’ and you will be asked to set where you would like to save your project locally:
+
+New maven project screenshot - cucumber jvm tutorial
+Once you have set where you want to store your project, set the project details and click 'Finish' to create your project:
+
+Finish new maven project screenshot - cucumber jvm tutorial
+Set up your dependencies
+With your Maven project set up, Eclipse will have generated a pom.xml file to which we will add our dependencies, to install and run Cucumber-JVM:
+
+<dependencies>
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java-</artifactId>
+        <version>2.3.1</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-junit-</artifactId>
+        <version>2.3.1</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+Once complete, your pom.xml will look similar to the following:
+
+pom.xml screenshot - cucumber jvm tutorial
+The cucumber-java dependency is the core Cucumber library we will be using to run our feature files. The cucumber-junit dependency provides support for us to run our feature files as part of the Maven build cycle.
+
+Create your first feature file
+Now we have Cucumber-JVM installed, we want to create a feature file to run. You will want to create your feature file inside the src/test/resources package and add content like the example below:
+
+Feature: Demo feature
+
+Scenario: Demonstrating how Cucumber-JVM works
+    Given I have a configured Cucumber-JVM project 
+    When I run it within my IDE 
+    Then I will be able to run connected step definitions
+The resulting feature file should look something like this:
+
+Package explorer screenshot - cucumber jvm tutorial
+Install and configure cucumber plugin
+With our feature file in place, our next step will be to run the file and let it locate matching step definitions to execute. Currently, we don’t have any means to run our feature file so we need to install the Cucumber plugin for Eclipse. Head to Help > Install New Software, click on 'Add' and enter the following details:
+
+Name          Cucumber
+
+Location     http://cucumber.github.com/cucumber-eclipse/update-site
+
+add repository screenshot - cucumber jvm tutorial
+Once you click on 'OK', you will see available plugins update and show the Cucumber Eclipse Plugin like so:
+
+Cucumber Eclipse Plugin screenshot - cucumber jvm tutorial
+Select the Cucumber Eclipse Plugin , click 'Next' and follow the wizard instructions, accepting the license terms and conditions, and then click 'Finish' to install the plugin. Once installed, Eclipse will need to restart.
+
+With the plugin installed and Eclipse restarted, we head over to our feature file and right click on the first line of the feature and select Run as > 1 Cucumber Feature:
+
+run as 1 cucumber feature screenshot - cucumber jvm tutorial
+When you click on menu option, the feature will be run and you will get an output like this:
+
+console output - cucumber jvm tutorial
+Running step definitions inside Eclipse
+Our feature file is now running inside Eclipse but is looking for step definitions to execute that don’t currently exist, so let’s create them. We can copy the step definition code from the output of the previous run to drop into a file, but first we need to create a new package named stepdefs in src/test/java.
+
+Package explorer screenshot - cucumber jvm tutorial
+Inside our package we create a new class called DemoDefinitions and copy the step definitions from the previous run's output:
+
+demo definitions screenshot - cucumber jvm tutorial
+Now, when we run our feature file again, we will get a different output:
+
+console II screenshot
+Our step definitions are now set up to be filled in with code to run automation against a product, and we can run our feature files inside Eclipse.
+
+
+
+Running via Maven
+Finally, we want to ensure that our Cucumber scenarios can be run as part of a Maven build process. Currently, when we run mvn test, it tell us there are no tests to run. We need to add a final class in to allow Maven to hook into Cucumber. So, create a new class inside src/test/java named RunCukesTest.
+
+run cukes test screenshot
+With the new class created you need to add the following above the class declaration:
+
+@RunWith(Cucumber.class)
+@CucumberOptions(<dependency>
+        features = {"src/test/resources"}
+)
+RunCukesTest.Java screenshot
+RunCukesTest.Java screenshot
+
+The Cucumber options provided point to the folder where our feature files are stored, so that when we run Maven again we can see that the scenarios have been run:
+
+maven tests screenshot
+maven tests screenshot
+
+Wrapping up
+At this point, we now have a Cucumber-JVM project set up to start developing on. We can add multiple new feature files within our resources package, and add matching step definitions inside the stepdefs package. 
+
+We also have the option to run our feature files inside Eclipse when we are actively developing them, and the option to run them via Maven when building our project.
